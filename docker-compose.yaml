@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    platform: linux/amd64
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      # kafka:
+      #   condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - CONFIG_PATH=/root/config.yaml
+    networks:
+      - job-queue-network
+
+  rabbitmq:
+    image: rabbitmq:4.0-rc-management
+    platform: linux/amd64
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - job-queue-network
+    volumes:
+      - ./rabbitmq-entrypoint.sh:/usr/local/bin/rabbitmq-entrypoint.sh 
+    entrypoint: ["/usr/local/bin/rabbitmq-entrypoint.sh"]
+    # user: "rabbitmq:rabbitmq"  # Run RabbitMQ as the correct user
+    # command: bash -c "chmod 600 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  # zookeeper:
+  #   image: zookeeper:3.7.1
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "1.0"
+  #         memory: "1G"
+  #       reservations:
+  #         cpus: "0.5"
+  #         memory: "512M"
+  #   platform: linux/amd64
+  #   ports:
+  #     - "2181:2181"
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #   networks:
+  #     - job-queue-network
+  #   healthcheck:
+  #     test: ["CMD", "nc", "-z", "localhost", "2181"]
+  #     interval: 10s
+  #     retries: 5
+  #     start_period: 60s
+  #     timeout: 10s
+
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.0.1
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: "2G"
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: "1G"
+  #   platform: linux/amd64
+  #   ports:
+  #     - "9092:9092"
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+  #     KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   depends_on:
+  #     zookeeper:
+  #       condition: service_healthy
+  #   networks:
+  #     - job-queue-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:9092 --timeout 10s"]
+  #     retries: 10
+  #     interval: 30s
+  #     start_period: 90s
+  #     timeout: 10s
+  redis:
+    image: redis:latest
+    platform: linux/amd64
+    ports:
+      - "6379:6379"
+    networks:
+      - job-queue-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+networks:
+  job-queue-network:
+    driver: bridge
