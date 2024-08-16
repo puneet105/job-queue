@@ -11,3 +11,23 @@ Use the JWT token obtained from the login to publish jobs to RabbitMQ, Kafka, an
 1. Publish a Job:Use curl to make a POST request to the /publish endpoint:bashCopy codecurl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzIzODk4NjM0fQ.V7C8reg3zfYH14rSF5FnT70jox-Lb-N4XMT2B6LxTsw" http://localhost:8080/publish
 2. Replace <your_jwt_token> with the token you obtained earlier.
 3. Check the Response:If successful, you should see a response:textCopy codePublished messages to all queues
+
+
+#### Output
+You will get an output in below format
+
+```
+job-queue-app-1       | 2024/08/16 13:20:53 Server is running on :8080
+job-queue-app-1       | Published message To RabbitMQ: Message 1 from Publisher 1
+job-queue-app-1       | Published message To RabbitMQ: Message 1 from Publisher 3
+job-queue-app-1       | Published message To RabbitMQ: Message 1 from Publisher 2
+job-queue-app-1       | Published message to Redis: Message 1 from Publisher 1
+job-queue-app-1       | Published message to Redis: Message 1 from Publisher 2
+job-queue-app-1       | Published message to Redis: Message 1 from Publisher 3
+job-queue-app-1       | Redis: Received a message: Message 1 from Publisher 2
+job-queue-app-1       | Redis: Received a message: Message 1 from Publisher 3
+job-queue-app-1       | Redis: Received a message: Message 1 from Publisher 1
+job-queue-app-1       | RabbitMQ: Received a message: Message 1 from Publisher 1
+job-queue-app-1       | RabbitMQ: Received a message: Message 1 from Publisher 3
+job-queue-app-1       | RabbitMQ: Received a message: Message 1 from Publisher 2
+```
