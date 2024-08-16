@@ -8,21 +8,22 @@ import (
     "github.com/puneet105/job-queue/internal/auth"
     "github.com/puneet105/job-queue/internal/queue"
     "github.com/puneet105/job-queue/internal/worker"
+    "github.com/puneet105/job-queue/internal/config"
 )
 
 func main() {
 	var rabbitMQ *queue.RabbitMQ
 	var redisQueue *queue.RedisQueue
     var err error
-	rabbitMQQueueName := "test-job-queue"
-   	redisQueueName := "test"
 	publishMessages := []string{
         "Message 1 from Publisher 1",
         "Message 1 from Publisher 2",
 		"Message 1 from Publisher 3",
     }
+    cfg := config.LoadConfig()
+    QueueName := cfg.QueueName
 	for retries := 0; retries < 5; retries++ {
-        rabbitMQ, err = queue.NewRabbitMQ()
+        rabbitMQ, err = queue.NewRabbitMQ(cfg)
         if err == nil {
             break
         }
@@ -39,7 +40,7 @@ func main() {
     }
 
     _, err = channel.QueueDeclare(
-        "test-job-queue", // name of the queue
+        cfg.QueueName,    // name of the queue
         true,             // durable
         false,            // delete when unused
         false,            // exclusive
@@ -53,7 +54,7 @@ func main() {
 
    
 	for retries := 0; retries < 5; retries++ { 
-		redisQueue, err = queue.NewRedisQueue()
+		redisQueue, err = queue.NewRedisQueue(cfg)
 		if err == nil {
 			break
 		}
@@ -66,10 +67,10 @@ func main() {
     defer redisQueue.Client.Close()
 
     
-    go worker.ProcessRabbitMQJob(rabbitMQ, rabbitMQQueueName)
-    go worker.ProcessRedisJob(redisQueue, redisQueueName)
+    go worker.ProcessRabbitMQJob(rabbitMQ, QueueName)
+    go worker.ProcessRedisJob(redisQueue, QueueName)
 
-    http.HandleFunc("/login", auth.LoginHandler) // Route for logging in and getting a JWT token
+    http.HandleFunc("/login", auth.LoginHandler) 
 
     http.Handle("/publish", auth.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         if r.Method != "POST" {
@@ -79,7 +80,7 @@ func main() {
 
         for i, messages := range publishMessages {
             go func(i int, messages string) {
-                err := rabbitMQ.Publish(rabbitMQQueueName, messages)
+                err := rabbitMQ.Publish(QueueName, messages)
                 if err != nil {
                     log.Printf("Publish %d failed: %v", i+1, err)
                 }
@@ -88,7 +89,7 @@ func main() {
 
         for i, messages := range publishMessages {
             go func(i int, messages string) {
-                err = redisQueue.Publish(redisQueueName, messages)
+                err = redisQueue.Publish(QueueName, messages)
                 if err != nil {
                     log.Printf("Publish %d failed: %v", i+1, err)
                 }

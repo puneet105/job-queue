@@ -1,0 +1,25 @@
+replicaCount: 2
+
+image:
+  repository: puneet1051996/job-queue-app
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+rabbitmq:
+  image: rabbitmq:4.0-rc-management
+  replicaCount: 1
+  service:
+    port: 5672
+
+redis:
+  image: redis:latest
+  replicaCount: 1
+  password: ""
+  service:
+    port: 6379
+
+resources: {}

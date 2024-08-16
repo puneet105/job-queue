@@ -2,8 +2,9 @@ package queue
 
 import (
     "github.com/streadway/amqp"
-    "gopkg.in/yaml.v2"
-    "os"
+    "github.com/puneet105/job-queue/internal/config"
+    // "gopkg.in/yaml.v2"
+    // "os"
     "fmt"
 )
 
@@ -12,24 +13,25 @@ type RabbitMQ struct {
     Channel *amqp.Channel
 }
 
-func NewRabbitMQ() (*RabbitMQ, error) {
-    config := struct {
-        RabbitMQ struct {
-            URL string `yaml:"url"`
-        } `yaml:"rabbitmq"`
-    }{}
+func NewRabbitMQ(config *config.Config) (*RabbitMQ, error) {
+    // config := struct {
+    //     RabbitMQ struct {
+    //         URL string `yaml:"url"`
+    //     } `yaml:"rabbitmq"`
+    // }{}
 
-    data, err := os.ReadFile("config.yaml")
-    if err != nil {
-        return nil, err
-    }
+    // data, err := os.ReadFile("config.yaml")
+    // if err != nil {
+    //     return nil, err
+    // }
 
-    err = yaml.Unmarshal(data, &config)
-    if err != nil {
-        return nil, err
-    }
-    fmt.Println(config.RabbitMQ.URL)
-    conn, err := amqp.Dial(config.RabbitMQ.URL)
+    // err = yaml.Unmarshal(data, &config)
+    // if err != nil {
+    //     return nil, err
+    // }
+    rabbitMQURL := fmt.Sprintf("amqp://%s:%s@%s:%s/", config.RabbitMQUser, config.RabbitMQHPass, config.RabbitMQHost, config.RabbitMQPort)
+    fmt.Println("Rabbit MQ URL is",rabbitMQURL)
+    conn, err := amqp.Dial(rabbitMQURL)
     if err != nil {
         return nil, err
     }

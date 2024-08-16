@@ -3,8 +3,9 @@ package queue
 import (
     "github.com/go-redis/redis/v8"
     "context"
-    "gopkg.in/yaml.v2"
-    "os"
+    "github.com/puneet105/job-queue/internal/config"
+    // "gopkg.in/yaml.v2"
+    // "os"
     "fmt"
 )
 
@@ -12,29 +13,36 @@ type RedisQueue struct {
     Client *redis.Client
 }
 
-func NewRedisQueue() (*RedisQueue, error) {
-    config := struct {
-        Redis struct {
-            Addr     string `yaml:"addr"`
-            Password string `yaml:"password"`
-            DB       int    `yaml:"db"`
-        } `yaml:"redis"`
-    }{}
+func NewRedisQueue(config *config.Config) (*RedisQueue, error) {
+    // config := struct {
+    //     Redis struct {
+    //         Addr     string `yaml:"addr"`
+    //         Password string `yaml:"password"`
+    //         DB       int    `yaml:"db"`
+    //     } `yaml:"redis"`
+    // }{}
 
-    data, err := os.ReadFile("config.yaml")
-    if err != nil {
-        return nil, err
-    }
+    // data, err := os.ReadFile("config.yaml")
+    // if err != nil {
+    //     return nil, err
+    // }
 
-    err = yaml.Unmarshal(data, &config)
-    if err != nil {
-        return nil, err
-    }
+    // err = yaml.Unmarshal(data, &config)
+    // if err != nil {
+    //     return nil, err
+    // }
 
+    // client := redis.NewClient(&redis.Options{
+    //     Addr:     config.Redis.Addr,
+    //     Password: config.Redis.Password,
+    //     DB:       config.Redis.DB,
+    // })
+
+    redisURL := fmt.Sprintf("%s:%s", config.RedisHost, config.RedisPort)
     client := redis.NewClient(&redis.Options{
-        Addr:     config.Redis.Addr,
-        Password: config.Redis.Password,
-        DB:       config.Redis.DB,
+        Addr:     redisURL,
+        Password: config.RedisPassword,
+        DB:       0,
     })
 
     return &RedisQueue{Client: client}, nil

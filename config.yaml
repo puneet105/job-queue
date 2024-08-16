@@ -1,14 +1,14 @@
-rabbitmq:
-  url: "amqp://guest:guest@rabbitmq:5672/"
+# rabbitmq:
+#   url: "amqp://guest:guest@rabbitmq:5672/"
 
-kafka:
-  brokers:
-    - "kafka:9092"
+# kafka:
+#   brokers:
+#     - "kafka:9092"
 
-redis:
-  addr: "redis:6379"
-  password: ""
-  db: 0
+# redis:
+#   addr: "redis:6379"
+#   password: ""
+#   db: 0
 
-auth:
-  jwt_secret: "YOU_LIVE_ONLY_ONCE"
+# auth:
+#   jwt_secret: "YOU_LIVE_ONLY_ONCE"
