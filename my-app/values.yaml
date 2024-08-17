@@ -1,3 +1,6 @@
+
+nameOverride: job-queue
+fullnameOverride: job-queue
 replicaCount: 2
 
 image:
