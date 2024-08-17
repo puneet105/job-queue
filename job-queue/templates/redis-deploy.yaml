@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "my-app.fullname" . }}-redis
+  name: {{ .Values.nameOverride }}-redis
 spec:
   replicas: {{ .Values.redis.replicaCount }}
   selector:

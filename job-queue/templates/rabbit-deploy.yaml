@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "my-app.fullname" . }}-rabbitmq
+  name: {{ .Values.nameOverride }}-rabbitmq
 spec:
   replicas: {{ .Values.rabbitmq.replicaCount }}
   selector:
