@@ -16,6 +16,8 @@ rabbitmq:
   image: rabbitmq:4.0-rc-management
   replicaCount: 1
   service:
+    name: rabbitmq
+    type: ClusterIP
     port: 5672
 
 redis:
@@ -23,6 +25,8 @@ redis:
   replicaCount: 1
   password: ""
   service:
+    name: redis
+    type: ClusterIP
     port: 6379
 
 resources: {}

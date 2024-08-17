@@ -3,11 +3,11 @@ entries:
   job-queue:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2024-08-17T12:56:19.727936+05:30"
+    created: "2024-08-17T13:07:33.43758+05:30"
     description: A Helm chart for deploying a Go app with RabbitMQ and Redis
-    digest: c256801e752b679c2f5f5027c0b979f23af8905673c8d6c3a476c491867e7cd4
+    digest: 3b104b7c35e004d17ac70febae2ff4c8ead810dad4a86fb56e13cd5930d0da2a
     name: job-queue
     urls:
     - job-queue-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-17T12:56:19.727419+05:30"
+generated: "2024-08-17T13:07:33.436931+05:30"
