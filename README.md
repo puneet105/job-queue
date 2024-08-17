@@ -40,7 +40,7 @@ job-queue-app-1       | RabbitMQ: Received a message: Message 1 from Publisher 2
 2. Navigate to the directory containing your Helm chart (Chart.yaml) and run:
 
 ```
-helm package .
+helm package job-queue/
 ```
 
 This will create a .tgz file (e.g., your-app-0.1.0.tgz).
@@ -48,7 +48,7 @@ This will create a .tgz file (e.g., your-app-0.1.0.tgz).
 3. Generate index.yaml: Move the .tgz file to the root of your repository or create a directory structure you prefer. Generate an index.yaml file:
 
 ```
-helm repo index .
+helm repo index job-queue/
 git add .
 git commit -m "Add Helm chart"
 git push origin gh-pages
